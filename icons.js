@@ -26,6 +26,7 @@
       '<text x="17" y="21.6" text-anchor="middle" font-family="TikTok Sans, -apple-system, Helvetica, Arial, sans-serif" font-size="10.6" font-weight="800" fill="currentColor" letter-spacing=".2">LIVE</text>'),
     repost: line('<path d="M17 2.8l3.2 3.2L17 9.2"/><path d="M4 11V9.4a3.4 3.4 0 0 1 3.4-3.4h12.6"/><path d="M7 21.2L3.8 18 7 14.8"/><path d="M20 13v1.6a3.4 3.4 0 0 1-3.4 3.4H4"/>', 2.1),
     soundBars: fill('<rect x="3" y="9" width="2.4" height="6" rx="1.2"/><rect x="7.5" y="5" width="2.4" height="14" rx="1.2"/><rect x="12" y="8" width="2.4" height="8" rx="1.2"/><rect x="16.5" y="3.5" width="2.4" height="17" rx="1.2"/>'),
+    volume: s('0 0 24 24', '<path fill="currentColor" d="M3.5 9.2h3.3l4.6-3.9c.6-.5 1.6-.1 1.6.7v12c0 .8-1 1.2-1.6.7l-4.6-3.9H3.5c-.6 0-1-.4-1-1V10.2c0-.6.4-1 1-1z"/><path d="M16 9a4.2 4.2 0 0 1 0 6M18.6 6.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
     muted: s('0 0 24 24', '<path fill="currentColor" d="M3.5 9.2h3.3l4.6-3.9c.6-.5 1.6-.1 1.6.7v12c0 .8-1 1.2-1.6.7l-4.6-3.9H3.5c-.6 0-1-.4-1-1V10.2c0-.6.4-1 1-1z"/><path d="M16.2 9.3l5 5m0-5l-5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'),
 
     /* ---------- Bottom nav ---------- */

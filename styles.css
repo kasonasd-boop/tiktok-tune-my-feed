@@ -760,3 +760,13 @@ div.a-row[data-action], div.l-row[data-action] { cursor: pointer; }
 .viewer .slide::after { height: 30%; }
 .screen.search-screen .scr-body { padding-bottom: 20px; }
 .toast > i { color: #fff; }
+
+/* Tune My Feed: per-topic mute */
+.mute-btn { flex: none; width: 32px; height: 32px; margin-left: 8px; border-radius: 50%; background: var(--sheet); color: var(--ink2); display: flex; align-items: center; justify-content: center; transition: background .2s, color .2s; }
+.mute-btn i { width: 17px; height: 17px; }
+.mute-btn .off, .mute-btn.on .on { display: none; }
+.mute-btn.on .off { display: inline-flex; }
+.mute-btn.on { background: var(--ink); color: #fff; }
+.topic-val.mute { color: var(--ink2); }
+.topic-row.muted .topic-name, .topic-row.muted .topic-ic { opacity: .45; }
+.topic-row.muted .slider, .topic-row.muted .sl-ends { opacity: .35; }

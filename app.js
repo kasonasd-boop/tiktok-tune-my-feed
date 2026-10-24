@@ -46,6 +46,8 @@
     comedy: 'comedy funny lol humor joke meme relatable',
   };
   const LEVELS = ['Much less', 'Less', 'Default', 'More', 'Much more'];
+  const MUTED = -1;   // a muted topic never appears on For You
+  const levelName = v => (v === MUTED ? 'Muted' : LEVELS[v]);
   const WEIGHTS = [0.1, 0.5, 1, 2.5, 5];
   const DEFAULT_PREFS = { food: 2, travel: 2, music: 2, fitness: 2, pets: 2, comedy: 2 };
   const DEFAULT_FOLLOWING = ['mayawanders', 'tyrell.laughs', 'mochiandmiso'];
@@ -155,13 +157,14 @@
      ========================================================= */
   let keySeq = 0;
   const mkItem = id => ({ key: id + '#' + (++keySeq), id });
-  const topicWeight = t => WEIGHTS[S.prefs[t]] * (S.penalty[t] ?? 1);
+  const topicWeight = t => (S.prefs[t] === MUTED ? 0 : WEIGHTS[S.prefs[t]] * (S.penalty[t] ?? 1));
   // Weighted picks by topic using smooth weighted round-robin with noise: random-looking order,
   // but every batch lands close to the chosen weights (so a live demo never gets an unlucky draw).
   // Never repeats any of the last 3 videos; within a topic prefers the least-recently-seen clip.
   function generate(n, historyIds, firstTopic = null) {
     const hist = historyIds.slice(), out = [];
     const w = Object.fromEntries(TOPICS.map(t => [t, topicWeight(t)]));
+    if (TOPICS.every(t => !w[t])) TOPICS.forEach(t => { w[t] = 1; });
     const total = TOPICS.reduce((a, t) => a + w[t], 0);
     const credit = Object.fromEntries(TOPICS.map(t => [t, Math.random() * w[t]]));
     for (let k = 0; k < n; k++) {
@@ -188,7 +191,8 @@
   function buildFeed(name) {
     if (name === 'foryou') {
       const isDefault = TOPICS.every(t => S.prefs[t] === 2) && !Object.keys(S.penalty).length;
-      let ids = isDefault ? CURATED_START.slice() : ['travel-1', ...generate(5, ['travel-1'])];
+      const start = S.prefs.travel === MUTED ? generate(1, []) : ['travel-1'];
+      let ids = isDefault ? CURATED_START.slice() : start.concat(generate(5, start));
       ids = ids.concat(generate(24, ids));
       return { name, list: ids.map(mkItem), index: 0 };
     }
@@ -830,6 +834,7 @@
           <span class="topic-ic">${ic('t_' + t)}</span>
           <span class="topic-name">${L[t]}${basis && basis.topic === t ? '<span class="this-tag">This video</span>' : ''}</span>
           <span class="topic-val"></span>
+          <button class="mute-btn" data-action="tune-mute" data-topic="${t}" aria-label="Mute ${L[t]}">${ic('volume', 'on')}${ic('muted', 'off')}</button>
         </div>
         <div class="slider" role="slider" tabindex="0" aria-label="${L[t]}" aria-valuemin="0" aria-valuemax="4" data-topic="${t}">
           <div class="sl-track"><div class="sl-fill"></div>${[0, 1, 2, 3, 4].map(i => `<span class="sl-tick" style="left:${i * 25}%"></span>`).join('')}</div>
@@ -907,15 +912,19 @@
     const root = sheet.sheet;
     TOPICS.forEach(t => {
       const row = $(`.topic-row[data-topic="${t}"]`, root); if (!row) return;
-      const val = draft[t];
+      const val = draft[t], muted = val === MUTED, pos = Math.max(0, val);
+      row.classList.toggle('muted', muted);
       const lab = $('.topic-val', row);
-      lab.textContent = LEVELS[val];
-      lab.className = 'topic-val' + (val > 2 ? ' up' : val < 2 ? ' down' : '');
-      $('.sl-fill', row).style.width = val * 25 + '%';
-      $('.sl-thumb', row).style.left = `calc(12px + (100% - 24px) * ${val / 4})`;
-      $$('.sl-tick', row).forEach((tk, i) => tk.classList.toggle('filled', i <= val));
+      lab.textContent = levelName(val);
+      lab.className = 'topic-val' + (muted ? ' mute' : val > 2 ? ' up' : val < 2 ? ' down' : '');
+      const mb = $('.mute-btn', row);
+      mb.classList.toggle('on', muted);
+      mb.setAttribute('aria-label', (muted ? 'Unmute ' : 'Mute ') + L[t]);
+      $('.sl-fill', row).style.width = (muted ? 0 : pos * 25) + '%';
+      $('.sl-thumb', row).style.left = `calc(12px + (100% - 24px) * ${pos / 4})`;
+      $$('.sl-tick', row).forEach((tk, i) => tk.classList.toggle('filled', !muted && i <= val));
       const sl = $('.slider', row);
-      sl.setAttribute('aria-valuenow', val); sl.setAttribute('aria-valuetext', LEVELS[val]);
+      sl.setAttribute('aria-valuenow', pos); sl.setAttribute('aria-valuetext', levelName(val));
     });
     $('[data-action="tune-save"]', root).disabled = TOPICS.every(t => draft[t] === S.prefs[t]);
     $('[data-action="tune-reset"]', root).disabled = TOPICS.every(t => draft[t] === 2);
@@ -924,11 +933,13 @@
   function tuneMessage(p) {
     const join = a => a.length <= 1 ? a.join('') : a.slice(0, -1).join(', ') + ' & ' + a[a.length - 1];
     const more = TOPICS.filter(t => p[t] > 2).sort((a, b) => p[b] - p[a]).map(t => L[t]);
-    const less = TOPICS.filter(t => p[t] < 2).sort((a, b) => p[a] - p[b]).map(t => L[t]);
-    if (!more.length && !less.length) return 'Got it — your For You feed is back to default.';
+    const less = TOPICS.filter(t => p[t] < 2 && p[t] !== MUTED).sort((a, b) => p[a] - p[b]).map(t => L[t]);
+    const muted = TOPICS.filter(t => p[t] === MUTED).map(t => L[t]);
+    if (!more.length && !less.length && !muted.length) return 'Got it — your For You feed is back to default.';
     const parts = [];
     if (more.length) parts.push('more ' + join(more));
     if (less.length) parts.push('less ' + join(less));
+    if (muted.length) parts.push('no ' + join(muted));
     return 'Got it — ' + parts.join(', ') + '.';
   }
 
@@ -1505,7 +1516,7 @@
       <div class="dp-sec">Up next (in order)</div>
       <div class="dp-queue">${nowT.map(t => `<span style="background:${TOPIC_COLOR[t]}" title="${L[t]}">${L[t][0]}</span>`).join('')}</div>
       <div class="dp-sec">Your settings</div>
-      <div class="dp-chips">${TOPICS.map(t => `<span class="${S.prefs[t] > 2 ? 'up' : S.prefs[t] < 2 ? 'down' : ''}">${L[t]}: ${LEVELS[S.prefs[t]]}</span>`).join('')}</div>
+      <div class="dp-chips">${TOPICS.map(t => `<span class="${S.prefs[t] > 2 ? 'up' : S.prefs[t] < 2 ? 'down' : ''}">${L[t]}: ${levelName(S.prefs[t])}</span>`).join('')}</div>
       <div class="dp-actions"><button data-action="demo-close">Close</button><button class="danger" data-action="demo-reset">Reset demo</button></div>
       <div class="dp-foot">Swipes this session: ${S.swipes} · Tip shown: ${S.flags.coachShown ? 'yes' : 'no'}<br>Weights — Much less 0.1 · Less 0.5 · Default 1 · More 2.5 · Much more 5</div>`;
   }
@@ -1596,6 +1607,14 @@
       if (!TUNE) return closeSheet();
       const t = TUNE; closeSheet(t.sheet);
       if (t.from === 'menu' && t.ctx && t.ctx.slide && t.ctx.slide.v && t.ctx.slide.v.id === t.ctx.v.id) setTimeout(() => openActionSheet(t.ctx.slide), 120);
+    },
+    'tune-mute': el => {
+      if (!TUNE) return;
+      const t = el.dataset.topic;
+      TUNE.prev = TUNE.prev || {};
+      if (TUNE.draft[t] === MUTED) TUNE.draft[t] = TUNE.prev[t] ?? 2;
+      else { TUNE.prev[t] = TUNE.draft[t]; TUNE.draft[t] = MUTED; }
+      vibrate(8); refreshTune();
     },
     'tune-reset': () => { if (!TUNE) return; TOPICS.forEach(t => { TUNE.draft[t] = 2; }); refreshTune(); },
     'tune-save': () => saveTune(),

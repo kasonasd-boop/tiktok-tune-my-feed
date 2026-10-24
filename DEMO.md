@@ -23,6 +23,7 @@
 
 **If someone asks…**
 - *"Is the ranking real?"* Yes. Each topic's weight is set by its slider (Much less 0.1 · Less 0.5 · Default 1 · More 2.5 · Much more 5). Every upcoming video is re-picked from those weights, and the same clip never repeats within 3 videos.
+- *"What if I never want a topic?"* Tap the speaker button on its row to **mute** it. A muted topic gets weight 0 and never appears on For You. Tap again to restore the previous setting.
 - *"What about Not interested?"* It still works, and it now also slightly lowers that topic's weight (×0.75).
 - *"Can I see the tip again?"* Yes: Reset demo, then swipe 5 times.
 
