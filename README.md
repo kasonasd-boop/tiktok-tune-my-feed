@@ -29,7 +29,7 @@ If macOS asks whether Python can accept incoming connections, click **Allow**.
 | `styles.css` | All visuals |
 | `app.js` | Feed, gestures, sheets, screens, ranking engine, demo panel |
 | `icons.js` | Inline SVG icons |
-| `data/videos.json` | The 25 videos (topic, creator, caption, sound, counts) |
+| `data/videos.json` | The 45 videos (topic, creator, caption, sound, counts) |
 | `data/videos.js` | Copy of the JSON, used only if you open `index.html` directly without the server |
 | `videos/` | 720×1280 H.264 clips with music (≈3 MB each) plus a `.jpg` poster for each |
 | `img/avatars/` | Creator avatars (cropped from the clips) |
