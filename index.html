@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TikTok Demo">
+  <meta name="theme-color" content="#000000">
+  <meta name="format-detection" content="telephone=no">
+  <title>TikTok · Tune My Feed</title>
+  <link rel="apple-touch-icon" href="img/app-icon.png">
+  <link rel="icon" href="img/app-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=TikTok+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    /* Decide phone (full-screen) vs laptop (iPhone frame) before first paint */
+    if (matchMedia('(max-width: 600px)').matches || (matchMedia('(pointer: coarse)').matches && Math.min(screen.width, screen.height) <= 600))
+      document.documentElement.classList.add('is-phone');
+  </script>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="device" id="device">
+      <div class="app" id="app">
+
+        <!-- ============ HOME (For You) ============ -->
+        <section class="home" id="home">
+          <div class="feed" id="feed">
+            <div class="track" id="track"></div>
+            <div class="feed-empty" id="feedEmpty" hidden></div>
+          </div>
+          <div class="top-shade"></div>
+
+          <header class="topbar" id="topbar">
+            <button class="icon-btn live-btn" data-action="open-live" aria-label="LIVE"><i data-icon="live"></i></button>
+            <nav class="tabs" id="tabs">
+              <button class="tab" data-tab="community">Community</button>
+              <button class="tab" data-tab="following">Following</button>
+              <button class="tab active" data-tab="foryou">For You</button>
+              <span class="tab-underline" id="tabUnderline"></span>
+            </nav>
+            <button class="icon-btn search-btn" data-action="open-search" aria-label="Search"><i data-icon="search"></i></button>
+          </header>
+
+          <button class="unmute-hint" id="unmuteHint" data-action="unmute" hidden><i data-icon="muted"></i><span>Tap to unmute</span></button>
+
+          <div class="progress" id="progress">
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div><div class="progress-thumb" id="progressThumb"></div></div>
+          </div>
+          <div class="scrub-time" id="scrubTime"><b>00:00</b> / 00:00</div>
+
+          <div class="coachmark" id="coachmark" hidden>
+            <div class="coach-ring"><span></span><span></span><i data-icon="hand"></i></div>
+            <div class="coach-bubble">
+              <b>Hold any video to tune your feed</b>
+              <span>See more of what you love, less of what you don't</span>
+            </div>
+          </div>
+
+          <div class="updating" id="updating" hidden>
+            <div class="shimmer"></div>
+            <div class="updating-card">
+              <div class="tt-loader"><span></span><span></span></div>
+              <span>Updating your For You…</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============ TAB SCREENS ============ -->
+        <section class="tab-screen light" id="screen-friends" hidden></section>
+        <section class="tab-screen light" id="screen-inbox" hidden></section>
+        <section class="tab-screen light" id="screen-profile" hidden></section>
+
+        <!-- ============ BOTTOM NAV ============ -->
+        <nav class="bottom-nav" id="bottomNav">
+          <button class="nav-item active" data-nav="home"><i class="on" data-icon="homeFill"></i><i class="off" data-icon="home"></i><span>Home</span></button>
+          <button class="nav-item" data-nav="friends"><i class="on" data-icon="friendsFill"></i><i class="off" data-icon="friends"></i><span>Friends</span></button>
+          <button class="nav-item nav-create" data-action="open-create" aria-label="Create"><span class="create-btn"><i data-icon="plusBold"></i></span></button>
+          <button class="nav-item" data-nav="inbox"><i class="on" data-icon="inboxFill"></i><i class="off" data-icon="inbox"></i><span>Inbox</span><b class="badge" id="inboxBadge">2</b></button>
+          <button class="nav-item" data-nav="profile"><i class="on" data-icon="profileFill"></i><i class="off" data-icon="profile"></i><span>Profile</span></button>
+        </nav>
+
+        <!-- Pushed full-screen pages (search, profiles, viewer, settings, chat, LIVE, camera) -->
+        <div class="overlays" id="overlays"></div>
+        <!-- Bottom sheets -->
+        <div class="sheets" id="sheets"></div>
+        <!-- Toasts -->
+        <div class="toasts" id="toasts"></div>
+      </div>
+
+      <!-- Fake iPhone chrome (laptop only) -->
+      <div class="statusbar" id="statusbar">
+        <span class="sb-time">6:13</span>
+        <span class="sb-right"><i data-icon="signal"></i><i data-icon="wifi"></i><span class="sb-battery"><b>79</b></span></span>
+      </div>
+      <div class="sb-hit" id="sbHit"></div>
+      <div class="island"></div>
+      <div class="home-indicator"></div>
+    </div>
+
+    <aside class="demo-panel" id="demoPanel" hidden></aside>
+    <p class="presenter-hint">Swipe / scroll / ↑↓ to browse · Hold a video for the menu · Press <kbd>D</kbd> for the demo panel</p>
+  </div>
+
+  <script src="icons.js"></script>
+  <script src="data/videos.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
