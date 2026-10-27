@@ -2,7 +2,7 @@
 
 A clickable TikTok-style app (plain HTML/CSS/JS, no build step) that adds one new feature: **Tune My Feed**. Long-press any video, tap *Tune My Feed*, set how much of each topic you want, and the upcoming For You videos are re-ranked right away.
 
-This is a concept prototype for a demo. It is not affiliated with TikTok. Keep it local; don't publish it.
+This is a concept prototype for a demo. It is not affiliated with TikTok. 
 
 ## Run it
 
